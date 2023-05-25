@@ -1,22 +1,35 @@
-import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../app/firebase";
+import { collection, doc, setDoc } from "firebase/firestore";
 const SignupForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data); // You can perform form submission logic here
+  const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    await createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (userCredential) => {
+        await setDoc(doc(db,"users",userCredential.user.uid),{businessName:data.businessName})
+          .then(() => {
+            navigate("/app");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mx-20 flex flex-col">
       <div className="mt-2 text-center">
-        <h2 className="text-3xl">
-          Sign Up
-        </h2>
+        <h2 className="text-3xl">Sign Up</h2>
       </div>
       <div className="mb-4">
         <label className="block mb-2 text-gray-700" htmlFor="businessName">
@@ -26,7 +39,9 @@ const SignupForm = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           type="text"
           id="businessName"
-          {...register('businessName', { required: 'Business Name is required' })}
+          {...register("businessName", {
+            required: "Business Name is required",
+          })}
         />
         {errors.businessName && (
           <p className="mt-2 text-red-500">{errors.businessName.message}</p>
@@ -41,11 +56,11 @@ const SignupForm = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           type="email"
           id="email"
-          {...register('email', {
-            required: 'Email is required',
+          {...register("email", {
+            required: "Email is required",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Invalid email address',
+              message: "Invalid email address",
             },
           })}
         />
@@ -62,7 +77,7 @@ const SignupForm = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           type="password"
           id="password"
-          {...register('password', { required: 'Password is required' })}
+          {...register("password", { required: "Password is required" })}
         />
         {errors.password && (
           <p className="mt-2 text-red-500">{errors.password.message}</p>
@@ -77,10 +92,10 @@ const SignupForm = () => {
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           type="password"
           id="confirmPassword"
-          {...register('confirmPassword', {
-            required: 'Confirm Password is required',
+          {...register("confirmPassword", {
+            required: "Confirm Password is required",
             validate: (value) =>
-              value === 'password' || 'Passwords do not match',
+              value === watch("password") || "Passwords do not match",
           })}
         />
         {errors.confirmPassword && (
@@ -95,11 +110,11 @@ const SignupForm = () => {
         Sign Up
       </button>
       <p>
-          or
-          <Link to="/auth" className="underline text-sky-500 text-lg">
-            SignIn
-          </Link>
-        </p>
+        or
+        <Link to="/auth" className="underline text-sky-500 text-lg">
+          SignIn
+        </Link>
+      </p>
     </form>
   );
 };

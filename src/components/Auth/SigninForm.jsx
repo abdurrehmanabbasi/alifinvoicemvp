@@ -1,22 +1,26 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { auth } from "../../app/firebase";
 const SigninForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data); // You can perform login logic here
+  const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    await signInWithEmailAndPassword(auth, data.email, data.password)
+      .then(() => {
+        navigate("/app");
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className=" mx-20 flex flex-col">
       <div className="mt-2 text-center">
-        <h2 className="text-3xl">
-          Sign In
-        </h2>
+        <h2 className="text-3xl">Sign In</h2>
       </div>
 
       <div className="mb-4">
