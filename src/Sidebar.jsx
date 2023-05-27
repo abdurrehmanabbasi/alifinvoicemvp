@@ -9,10 +9,10 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import useAuth from "./hooks/useAuth";
-const Sidebar = () => {
+const Sidebar = ({openMenu,setOpenMenu}) => {
   const {user}=useAuth()
   return (
-    <aside className="shadow-lg flex flex-col">
+    <aside className={`shadow-lg flex-col ${openMenu?'flex':'hidden'}`}>
       <div className=" flex flex-col flex-1 p-2 mt-8">
         <div className="user  w-full">
           <div className="flex flex-col items-center justify-center w-full">
