@@ -3,6 +3,7 @@
 // import useAuth from "../../hooks/useAuth"
 // import { useEffect, useState } from "react"
 import { Link, useOutlet } from "react-router-dom";
+import ProductsTable from "./ProductsTable";
 const Products = () => {
     const outlet=useOutlet()
     
@@ -11,7 +12,7 @@ const Products = () => {
         <h2 className="text-3xl border-b-4 pb-1 ">Product Managment </h2>
         <Link to="new">New Product</Link>
         </div>
-        {outlet||<div>No Outler</div>}
+        {outlet||<div><ProductsTable/></div>}
     </div> );
 }
  
