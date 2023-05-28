@@ -11,6 +11,8 @@ import Layout from "./components/Layout";
 import Dashboard from "./components/Dashboard/index";
 import Products from "./components/Products/index";
 import Invoices from "./components/Invoices/index";
+import NewProduct from "./components/Products/NewProduct";
+import UpdateProduct from "./components/Products/UpdateProduct";
 function App() {
   return (
     <Routes>
@@ -18,7 +20,11 @@ function App() {
 
       <Route path="app" element={<Layout />}>
         <Route index element={<Dashboard />} />
-        <Route path="products" element={<Products />} />
+        <Route path="products" element={<Products />} >
+          <Route path="new" element={<NewProduct/>} />
+          <Route path="update/:id" element={<UpdateProduct/>} />
+
+        </Route>
         <Route path="invoices" element={<Invoices />} />
       </Route>
 

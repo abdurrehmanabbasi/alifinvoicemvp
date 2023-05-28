@@ -1,38 +1,45 @@
-import { useForm } from 'react-hook-form';
-
+import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../app/firebase";
+import { useNavigate } from "react-router-dom";
 const NewProduct = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
-  const onSubmit = (data) => {
-    console.log(data);
-    // Handle form submission logic here
+  const { user,userDoc } = useAuth();
+  const navigate=useNavigate()
+  const onSubmit = async(data) => {
+    let sku=generateSKU(data.category,data.productName,data.weight)
+    try {
+      await setDoc(doc(db,"users",user.uid,"products",sku),{
+        productName:data.productName,
+        price:data.price,
+        weight:data.weight,
+        category:data.category,
+      })
+      navigate("/app/products")
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
 
+  const generateSKU=(category, productName, weight)=>{
+    // Convert category and product name to uppercase and remove spaces
+    const formattedCategory = category.toUpperCase().replace(/\s/g, '').substring(0,3);
+    const formattedProductName = productName.toUpperCase().replace(/\s/g, '').substring(0,3);
+    // Combine formatted elements to create the SKU
+    
+    const sku = `${formattedCategory}-${formattedProductName}-${weight}G`;
+    return sku;
+  }
   return (
     <div className="w-full max-w-sm">
       <h2 className="text-xl font-bold mb-4">New Product</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
-          <label htmlFor="sku" className="block text-gray-700">
-            SKU
-          </label>
-          <input
-            type="text"
-            id="sku"
-            {...register('sku', { required: 'SKU is required' })}
-            className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.sku ? 'border-red-500' : 'border-gray-300'
-            }`}
-          />
-          {errors.sku && (
-            <p className="text-red-500 text-xs mt-1">{errors.sku.message}</p>
-          )}
-        </div>
-
         <div className="mb-4">
           <label htmlFor="productName" className="block text-gray-700">
             Product Name
@@ -40,9 +47,11 @@ const NewProduct = () => {
           <input
             type="text"
             id="productName"
-            {...register('productName', { required: 'Product Name is required' })}
+            {...register("productName", {
+              required: "Product Name is required",
+            })}
             className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.productName ? 'border-red-500' : 'border-gray-300'
+              errors.productName ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.productName && (
@@ -59,9 +68,9 @@ const NewProduct = () => {
           <input
             type="number"
             id="price"
-            {...register('price', { required: 'Price is required' })}
+            {...register("price", { required: "Price is required" })}
             className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.price ? 'border-red-500' : 'border-gray-300'
+              errors.price ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.price && (
@@ -70,21 +79,20 @@ const NewProduct = () => {
         </div>
 
         <div className="mb-4">
-          <label htmlFor="quantity" className="block text-gray-700">
-            Quantity
+          <label htmlFor="weight" className="block text-gray-700">
+            Weight(g)
           </label>
           <input
             type="number"
-            id="quantity"
-            {...register('quantity', { required: 'Quantity is required' })}
+            id="weight"
+            {...register("weight", { required: "Weight is required" })}
             className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.quantity ? 'border-red-500' : 'border-gray-300'
+              errors.weight ? "border-red-500" : "border-gray-300"
             }`}
           />
-          {errors.quantity && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.quantity.message}
-            </p>
+
+          {errors.weight && (
+            <p className="text-red-500 text-xs mt-1">{errors.weight.message}</p>
           )}
         </div>
 
@@ -92,14 +100,18 @@ const NewProduct = () => {
           <label htmlFor="category" className="block text-gray-700">
             Category
           </label>
-          <input
-            type="text"
+          <select
             id="category"
-            {...register('category', { required: 'Category is required' })}
+            {...register("category", { required: "Category is required" })}
             className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.category ? 'border-red-500' : 'border-gray-300'
+              errors.category ? "border-red-500" : "border-gray-300"
             }`}
-          />
+          >
+            <option value="">Select a category</option>
+            {userDoc?.product_categories.map((category) => 
+              <option value={category} key={category}>{category}</option>
+            )}
+          </select>
           {errors.category && (
             <p className="text-red-500 text-xs mt-1">
               {errors.category.message}
@@ -113,9 +125,11 @@ const NewProduct = () => {
           </label>
           <textarea
             id="description"
-            {...register('description', { required: 'Description is required' })}
+            {...register("description", {
+              required: "Description is required",
+            })}
             className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.description ? 'border-red-500' : 'border-gray-300'
+              errors.description ? "border-red-500" : "border-gray-300"
             }`}
           />
           {errors.description && (
