@@ -5,13 +5,11 @@ This project is a Minimum Viable Product (MVP) for a cloud-based invoice managem
 ## Features
 
 - User Authentication: Users can sign up, log in, and log out securely using Firebase Authentication.
-- Dashboard: Users are provided with a clean and intuitive dashboard where they can view and manage their invoices.
-- Invoice Creation: Users can create new invoices by providing relevant details such as client information, itemized services, and payment terms.
-- Invoice Listing: Users can view a list of their invoices, including basic information such as invoice number, client name, and total amount.
-- Invoice Details: Users can view the details of an individual invoice, including all relevant information and a breakdown of items and amounts.
-- Invoice Editing: Users have the ability to edit existing invoices, update details, add or remove items, and adjust payment terms.
-- Invoice Deletion: Users can delete invoices they no longer need from their dashboard.
-- Invoice PDF Generation: Users can generate PDF versions of their invoices for easy sharing and printing.
+- Dashboard: Users are provided with a clean and intuitive dashboard where they can view important information and access various modules.
+- Product Management: Users can manage their products/services by adding, editing, and deleting items from their inventory.
+- Invoice Management: Users can create, view, edit, and delete invoices. They can also generate PDF versions for easy sharing and printing.
+- Customer Management: Users can manage their customer database by adding, editing, and deleting customer profiles.
+- Reporting: Users can generate reports on sales, revenue, and other key metrics to gain insights into their business performance.
 
 ## Prerequisites
 
@@ -39,7 +37,7 @@ npm install
 
 4. Set up Firebase project:
    - Create a new Firebase project at [https://firebase.google.com](https://firebase.google.com).
-   - Enable Firebase Authentication and Firestore in your project.
+   - Enable Firebase Authentication, Firestore, and Storage in your project.
    - Obtain your Firebase project configuration credentials.
 
 5. Configure Firebase credentials:
@@ -63,7 +61,7 @@ Replace `YOUR_API_KEY`, `YOUR_AUTH_DOMAIN`, `YOUR_PROJECT_ID`, `YOUR_STORAGE_BUC
 npm start
 ```
 
-7. Open your browser and visit [http://localhost:3000](http://localhost:3000) to see the application in action.
+7. Open your browser and visit [http://localhost:5173](http://localhost:5173) to see the application in action.
 
 ## Deployment
 
