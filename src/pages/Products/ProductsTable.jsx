@@ -24,7 +24,6 @@ const ProductsTable = () => {
   console.log(products)
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Products</h2>
       <table className="w-2/3 text-left">
         <thead>
           <tr>

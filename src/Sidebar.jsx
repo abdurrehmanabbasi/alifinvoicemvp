@@ -25,7 +25,7 @@ const Sidebar = ({openMenu,setOpenMenu}) => {
           </div>
         </div>
 
-        <nav className="flex flex-col font-mono text-lg mt-10">
+        <nav className="flex flex-col text-lg mt-10">
           <NavLink
             className="flex p-4 gap-x-2 items-center"
             to="/app"
@@ -58,7 +58,7 @@ const Sidebar = ({openMenu,setOpenMenu}) => {
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
-            to="invoices"
+            to="settings"
           >
             <Cog8ToothIcon className="w-8" /> Settings
           </NavLink>

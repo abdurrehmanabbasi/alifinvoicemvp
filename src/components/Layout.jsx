@@ -12,7 +12,7 @@ const Layout = () => {
   return !user ? (
     <Navigate to={"/auth"} />
   ) : (
-    <div className="app flex w-screen h-screen overflow-hidden flex-col md:flex-row">
+    <div className="app font-Inter flex w-screen h-screen overflow-hidden flex-col md:flex-row">
       <button onClick={() => setOpenMenu(!openMenu)} className="p-3 absolute top-0 left-0 ">
         {!openMenu ? (
           <Bars3Icon className="w-8" />
