@@ -3,39 +3,53 @@ import useAuth from "../../hooks/useAuth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../app/firebase";
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Loading from "@/components/Loading"
+const quantityTypes=["g","kg","pound","ounce","ml","l","ft","cm","m"]
+const product_categories=["achar","khajoor","halwa","rewadi"]
 const NewProduct = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { user, userDoc } = useAuth();
-  const navigate = useNavigate();
+  const navigate=useNavigate()
+  const { user} = useAuth();
+  const [loading,setLoading]=useState(false)
   const onSubmit = async (data) => {
     let sku = generateSKU(
-      data.category,
       data.brandName,
       data.productName,
-      data.weight
+      data.category,
+      data.quantity,
+      data.quantityType
     );
     try {
+      setLoading(true)
       await setDoc(doc(db, "users", user.uid, "products", sku), {
-        brandName: data.brandName,
-        productName: data.productName,
-        category: data.category,
-        weight: data.weight,
-        price: data.price,
-        description: data.description,
+        "brandName": data.brandName,
+        "productName": data.productName,
+        "category": data.category,
+        "quantity":data.quantity,
+        "quantityType":data.quantityType,
+        "price": data.price,
+        "description": data.description,
       });
-      navigate("/app/products");
+      navigate("..")
     } catch (error) {
       console.log(error);
     }
   };
 
-  const generateSKU = (category, brandName, productName, weight) => {
-    // Convert category and product name to uppercase and remove spaces
-    const formattedCategory = category
+  const generateSKU = (
+    brandName,
+    productName,
+    categoryName,
+    quantity,
+    quantityType
+  ) => {
+    // Convert brand name, product name, and category name to uppercase and remove spaces
+    const formattedBrandName = brandName
       .toUpperCase()
       .replace(/\s/g, "")
       .substring(0, 3);
@@ -43,11 +57,16 @@ const NewProduct = () => {
       .toUpperCase()
       .replace(/\s/g, "")
       .substring(0, 3);
-    // Combine formatted elements to create the SKU
+    const formattedCategoryName = categoryName
+      .toUpperCase()
+      .replace(/\s/g, "")
+      .substring(0, 3);
 
-    const sku = `${formattedCategory}-${formattedProductName}-${weight}G`;
+    // Combine formatted elements to create the SKU
+    const sku = `${formattedCategoryName}-${formattedBrandName}-${formattedProductName}-${quantity}${quantityType}`;
     return sku;
   };
+
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-sm md:max-w-lg ">
@@ -107,7 +126,7 @@ const NewProduct = () => {
             }`}
           >
             <option value="">Select a category</option>
-            {userDoc?.product_categories?.map((category) => (
+            {product_categories?.map((category) => (
               <option value={category} key={category}>
                 {category}
               </option>
@@ -145,24 +164,26 @@ const NewProduct = () => {
               Quantity Type
             </label>
             <select
-            id="quantityType"
-            {...register("quantityType", { required: "quantityType is required" })}
-            className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.quantityType ? "border-red-500" : "border-gray-300"
-            }`}
-          >
-            <option value="">Select a Quantity Type</option>
-            {userDoc?.quantityType?.map((quantityType) => (
-              <option value={quantityType} key={quantityType}>
-                {quantityType}
-              </option>
-            ))}
-          </select>
-          {errors.quantityType && (
-            <p className="text-red-500 text-xs mt-1">
-              {errors.quantityType.message}
-            </p>
-          )}
+              id="quantityType"
+              {...register("quantityType", {
+                required: "quantityType is required",
+              })}
+              className={`border rounded-md px-3 py-2 mt-1 w-full ${
+                errors.quantityType ? "border-red-500" : "border-gray-300"
+              }`}
+            >
+              <option value="">Select a Quantity Type</option>
+              {quantityTypes?.map((quantityType) => (
+                <option value={quantityType} key={quantityType}>
+                  {quantityType}
+                </option>
+              ))}
+            </select>
+            {errors.quantityType && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.quantityType.message}
+              </p>
+            )}
           </div>
         </div>
 
@@ -203,6 +224,7 @@ const NewProduct = () => {
             </p>
           )}
         </div>
+            {loading?<Loading loadingText="Adding Product"/>:
         <div className="flex h-16 justify-stretch gap-3">
           <Link
             to={".."}
@@ -212,11 +234,12 @@ const NewProduct = () => {
           </Link>
           <button
             type="submit"
-            className="bg-blue-500  flex-1 text-white rounded-md"
+            className="bg-blue-500  flex-1 text-white rounded-md disabled:opacity-40"
           >
             Save
           </button>
         </div>
+        }
       </form>
     </div>
   );

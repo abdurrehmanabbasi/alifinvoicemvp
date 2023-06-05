@@ -25,7 +25,7 @@ const Sidebar = ({openMenu,setOpenMenu}) => {
           </div>
         </div>
 
-        <nav className="flex flex-col text-lg mt-10">
+        <nav className="flex flex-col text-lg mt-10 ">
           <NavLink
             className="flex p-4 gap-x-2 items-center"
             to="/app"
