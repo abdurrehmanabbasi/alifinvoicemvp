@@ -4,7 +4,7 @@ import Sidebar from "../Sidebar";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 const Layout = () => {
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openMenu, setOpenMenu] = useState(true);
   const { user } = useAuth();
   useEffect(() => {
     document.title = "Alif Invoices";

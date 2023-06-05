@@ -5,7 +5,7 @@ import { db } from "../../app/firebase";
 
 const Categories = () => {
   const {
-    register,
+    register, 
     handleSubmit,
     formState: { errors },
   } = useForm();
