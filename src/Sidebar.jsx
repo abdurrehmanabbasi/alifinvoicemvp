@@ -46,9 +46,9 @@ const Sidebar = ({openMenu,setOpenMenu}) => {
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
-            to="invoices"
+            to="customers"
           >
-            <UserGroupIcon className="w-8" /> Clients
+            <UserGroupIcon className="w-8" /> Customers
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"

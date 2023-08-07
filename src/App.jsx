@@ -11,11 +11,19 @@ import Layout from "@/components/Layout";
 import Dashboard from "@/pages/Dashboard/index";
 import Products from "@/pages/Products/index";
 import Invoices from "@/pages/Invoices/index";
+import Customers from "@/pages/Customer/index";
 import Settings from "@/pages/Settings";
+
 import Product from "@/pages/Products/Product";
 import NewProduct from "@/pages/Products/NewProduct";
 import ProductsTable from "@/pages/Products/ProductsTable";
- 
+
+
+import CustomerTable from "@/pages/Customer/CustomerTable"
+import Customer from "@/pages/Customer/Customer"
+import NewCustomer from "@/pages/Customer/NewCustomer"
+
+
 function App() {
   return (
     <Routes>
@@ -27,6 +35,11 @@ function App() {
           <Route index element={<ProductsTable />} />
           <Route path=":id" element={<Product />} />
           <Route path="new" element={<NewProduct />} />
+        </Route>
+        <Route path="customers" element={<Customers />}>
+          <Route index element={<CustomerTable />} />
+          <Route path=":id" element={<Customer />} />
+          <Route path="new" element={<NewCustomer />} />
         </Route>
         <Route path="invoices" element={<Invoices />} />
         <Route path="settings" element={<Settings />} />
