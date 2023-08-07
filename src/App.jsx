@@ -15,7 +15,7 @@ import Settings from "@/pages/Settings";
 import Product from "@/pages/Products/Product";
 import NewProduct from "@/pages/Products/NewProduct";
 import ProductsTable from "@/pages/Products/ProductsTable";
-
+ 
 function App() {
   return (
     <Routes>
@@ -24,7 +24,7 @@ function App() {
       <Route path="app" element={<Layout />}>
         <Route index element={<Dashboard />} />
         <Route path="products" element={<Products />}>
-          <Route index element={<ProductsTable/>}/>
+          <Route index element={<ProductsTable />} />
           <Route path=":id" element={<Product />} />
           <Route path="new" element={<NewProduct />} />
         </Route>
