@@ -52,7 +52,7 @@ const ProductsTable = () => {
               <td className="py-2 px-4 border-b">{product.productName}</td>
               <td className="py-2 px-4 border-b">{product.price}</td>
               <td className="py-2 px-4 border-b">
-                {product.quantity + product.quantityType}
+                {product.quantity+"" + product.quantityType}
               </td>
               <td className="py-2 px-4 border-b">{product.category}</td>
               <td className="py-2 px-4 border-b">
