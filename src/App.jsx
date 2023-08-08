@@ -23,6 +23,10 @@ import CustomerTable from "@/pages/Customer/CustomerTable"
 import Customer from "@/pages/Customer/Customer"
 import NewCustomer from "@/pages/Customer/NewCustomer"
 
+import InvoicesTable from "@/pages/Invoices/InvoicesTable"
+import Invoice from "@/pages/Invoices/Invoice"
+import NewInvoice from "@/pages/Invoices/NewInvoice"
+
 
 function App() {
   return (
@@ -41,7 +45,12 @@ function App() {
           <Route path=":id" element={<Customer />} />
           <Route path="new" element={<NewCustomer />} />
         </Route>
-        <Route path="invoices" element={<Invoices />} />
+
+        <Route path="invoices" element={<Invoices />}>
+          <Route index element={<InvoicesTable />} />
+          <Route path=":id" element={<Invoice />} />
+          <Route path="new" element={<NewInvoice />} />
+        </Route>
         <Route path="settings" element={<Settings />} />
       </Route>
 
