@@ -60,7 +60,8 @@ const NewInvoice = () => {
     const selectedProduct = products.find(
       (product) => product.id === productId
     );
-    if (selectedProduct) {
+    
+    if (selectedProduct && !invoiceProducts.some((p) => p.id === selectedProduct.id)) {
       setInvoiceProducts((prevProducts) => [...prevProducts, selectedProduct]);
       setValue("productId", ""); // Clear the selected product after adding
     }
@@ -69,6 +70,14 @@ const NewInvoice = () => {
   const removeProductFromInvoice = (productId) => {
     setInvoiceProducts((prevProducts) =>
       prevProducts.filter((product) => product.id !== productId)
+    );
+  };
+  const handlePriceEdit = (event, productId) => {
+    const editedPrice = parseFloat(event.target.value);
+    setInvoiceProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === productId ? { ...product, price: editedPrice } : product
+      )
     );
   };
 
@@ -83,7 +92,16 @@ const NewInvoice = () => {
       console.log(error);
     }
   };
+  const calculateSubtotal = (product) => {
+    return product.price * product.unit;
+  };
 
+  const calculateTotal = () => {
+    return invoiceProducts.reduce(
+      (total, product) => total + calculateSubtotal(product),
+      0
+    );
+  };
   return (
     <div className="w-full max-w-2xl p-10 text-lg">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -140,34 +158,68 @@ const NewInvoice = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Invoice Products</label>
-          <table className="w-full border">
-            <thead>
-              <tr>
-                <th className="border px-4 py-2">Product Name</th>
-                <th className="border px-4 py-2">Price</th>
-                <th className="border px-4 py-2"></th>
+        <label className="block text-gray-700">Invoice Products</label>
+        <table className="w-full border">
+          <thead>
+            <tr>
+              <th className="border px-4 py-2">Product Name</th>
+              <th className="border px-4 py-2">Price</th>
+              <th className="border px-4 py-2">Unit</th>
+              <th className="border px-4 py-2">Sub Total</th>
+              <th className="border px-4 py-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoiceProducts.map((product) => (
+              <tr key={product.id}>
+                <td className="border px-4 py-2">{product.productName}</td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    value={product.price}
+                    onChange={(e) => handlePriceEdit(e, product.id)}
+                  />
+                </td>
+                <td className="border px-4 py-2">
+                  <input
+                    type="number"
+                    value={product.unit}
+                    defaultValue={0}
+                    onChange={(e) => {
+                      const newUnit = parseInt(e.target.value);
+                      setInvoiceProducts((prevProducts) =>
+                        prevProducts.map((p) =>
+                          p.id === product.id ? { ...p, unit: newUnit } : p
+                        )
+                      );
+                    }}
+                  />
+                </td>
+                <td className="border px-4 py-2">{calculateSubtotal(product)?calculateSubtotal(product):0}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    type="button"
+                    onClick={() => removeProductFromInvoice(product.id)}
+                    className="text-red-600"
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {invoiceProducts.map((product) => (
-                <tr key={product.id}>
-                  <td className="border px-4 py-2">{product.productName}</td>
-                  <td className="border px-4 py-2">{product.price}</td>
-                  <td className="border px-4 py-2">
-                    <button
-                      type="button"
-                      onClick={() => removeProductFromInvoice(product.id)}
-                      className="text-red-600"
-                    >
-                      <TrashIcon className="w-5 h-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+
+            <tr>
+              <td className="border px-4 py-2 font-bold">Total</td>
+              <td className="border px-4 py-2 font-bold"></td>
+              <td className="border px-4 py-2"></td>
+              <td className="border px-4 py-2 font-bold">
+                {calculateTotal()}
+              </td>
+              <td className="border px-4 py-2"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
         <button
           type="submit"
