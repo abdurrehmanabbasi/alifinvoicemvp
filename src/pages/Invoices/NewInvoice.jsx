@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const NewInvoice = () => {
   const {
@@ -21,6 +23,8 @@ const NewInvoice = () => {
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
+
+  const [selectedDate, setSelectedDate] = useState(null);
   const [invoiceProducts, setInvoiceProducts] = useState([]);
 
   useEffect(() => {
@@ -60,8 +64,11 @@ const NewInvoice = () => {
     const selectedProduct = products.find(
       (product) => product.id === productId
     );
-    
-    if (selectedProduct && !invoiceProducts.some((p) => p.id === selectedProduct.id)) {
+
+    if (
+      selectedProduct &&
+      !invoiceProducts.some((p) => p.id === selectedProduct.id)
+    ) {
       setInvoiceProducts((prevProducts) => [...prevProducts, selectedProduct]);
       setValue("productId", ""); // Clear the selected product after adding
     }
@@ -84,12 +91,29 @@ const NewInvoice = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      // Perform the logic to create a new invoice
+
+      const invoiceData = {
+        customerId: data.customerId,
+        products: invoiceProducts.map((product) => ({
+          productId: product.id,
+          productName: product.productName,
+          price: product.price,
+          unit: product.unit,
+          subtotal: calculateSubtotal(product),
+        })),
+        total: calculateTotal(),
+        invoiceDate: selectedDate, // Add the selected date
+      };
+
+      // Perform the logic to create a new invoice using the invoiceData
       // You can access selected customer and products using data.customerId and invoiceProducts
       // Then, navigate to the appropriate page
-      navigate("..");
+      console.log(invoiceData);
+      // navigate("..");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
   const calculateSubtotal = (product) => {
@@ -129,7 +153,24 @@ const NewInvoice = () => {
             </p>
           )}
         </div>
-
+        <div className="mb-4">
+          <label htmlFor="invoiceDate" className="block text-gray-700">
+            Invoice Date
+          </label>
+          <DatePicker
+            id="invoiceDate"
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            className={`border rounded-md px-3 py-2 mt-1 w-full ${
+              errors.invoiceDate ? "border-red-500" : "border-gray-300"
+            }`}
+          />
+          {errors.invoiceDate && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.invoiceDate.message}
+            </p>
+          )}
+        </div>
         <div className="mb-4">
           <label htmlFor="product" className="block text-gray-700">
             Products
@@ -158,68 +199,75 @@ const NewInvoice = () => {
         </div>
 
         <div className="mb-4">
-        <label className="block text-gray-700">Invoice Products</label>
-        <table className="w-full border">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">Product Name</th>
-              <th className="border px-4 py-2">Price</th>
-              <th className="border px-4 py-2">Unit</th>
-              <th className="border px-4 py-2">Sub Total</th>
-              <th className="border px-4 py-2"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {invoiceProducts.map((product) => (
-              <tr key={product.id}>
-                <td className="border px-4 py-2">{product.productName}</td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="number"
-                    value={product.price}
-                    onChange={(e) => handlePriceEdit(e, product.id)}
-                  />
-                </td>
-                <td className="border px-4 py-2">
-                  <input
-                    type="number"
-                    value={product.unit}
-                    defaultValue={0}
-                    onChange={(e) => {
-                      const newUnit = parseInt(e.target.value);
-                      setInvoiceProducts((prevProducts) =>
-                        prevProducts.map((p) =>
-                          p.id === product.id ? { ...p, unit: newUnit } : p
-                        )
-                      );
-                    }}
-                  />
-                </td>
-                <td className="border px-4 py-2">{calculateSubtotal(product)?calculateSubtotal(product):0}</td>
-                <td className="border px-4 py-2">
-                  <button
-                    type="button"
-                    onClick={() => removeProductFromInvoice(product.id)}
-                    className="text-red-600"
-                  >
-                    <TrashIcon className="w-5 h-5" />
-                  </button>
-                </td>
+          <label className="block text-gray-700">Invoice Products</label>
+          <table className="w-full border">
+            <thead>
+              <tr>
+                <th className="border px-4 py-2">Product Name</th>
+                <th className="border px-4 py-2">Price</th>
+                <th className="border px-4 py-2">Unit</th>
+                <th className="border px-4 py-2">Sub Total</th>
+                <th className="border px-4 py-2"></th>
               </tr>
-            ))}
+            </thead>
+            <tbody>
+              {invoiceProducts.map((product) => (
+                <tr key={product.id}>
+                  <td className="border px-4 py-2 w-full">
+                    {product.productName}
+                  </td>
+                  <td className="border p-0">
+                    <input
+                      type="number"
+                      className="h-full w-full"
+                      value={product.price}
+                      onChange={(e) => handlePriceEdit(e, product.id)}
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      value={product.unit}
+                      defaultValue={0}
+                      onChange={(e) => {
+                        const newUnit = parseInt(e.target.value);
+                        setInvoiceProducts((prevProducts) =>
+                          prevProducts.map((p) =>
+                            p.id === product.id ? { ...p, unit: newUnit } : p
+                          )
+                        );
+                      }}
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    {calculateSubtotal(product)
+                      ? calculateSubtotal(product)
+                      : 0}
+                  </td>
+                  <td className="border px-4 py-2">
+                    <button
+                      type="button"
+                      onClick={() => removeProductFromInvoice(product.id)}
+                      className="text-red-600"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
 
-            <tr>
-              <td className="border px-4 py-2 font-bold">Total</td>
-              <td className="border px-4 py-2 font-bold"></td>
-              <td className="border px-4 py-2"></td>
-              <td className="border px-4 py-2 font-bold">
-                {calculateTotal()}
-              </td>
-              <td className="border px-4 py-2"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              <tr>
+                <td className="border px-4 py-2 font-bold">Total</td>
+                <td className="border px-4 py-2 font-bold"></td>
+                <td className="border px-4 py-2"></td>
+                <td className="border px-4 py-2 font-bold">
+                  {calculateTotal()?calculateTotal:0}
+                </td>
+                <td className="border px-4 py-2"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <button
           type="submit"
