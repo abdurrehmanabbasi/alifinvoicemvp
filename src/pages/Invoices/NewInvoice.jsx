@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs, } from "firebase/firestore";
 import { db } from "../../app/firebase";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Loading from "@/components/Loading";
@@ -16,6 +16,7 @@ const NewInvoice = () => {
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm();
   const { user } = useAuth();
@@ -24,7 +25,6 @@ const NewInvoice = () => {
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
 
-  const [selectedDate, setSelectedDate] = useState(null);
   const [invoiceProducts, setInvoiceProducts] = useState([]);
 
   useEffect(() => {
@@ -49,6 +49,8 @@ const NewInvoice = () => {
         const productsData = snapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
+          unit: 0, // Initialize unit with a default value
+
         }));
         setProducts(productsData);
       } catch (error) {
@@ -102,14 +104,10 @@ const NewInvoice = () => {
           subtotal: calculateSubtotal(product),
         })),
         total: calculateTotal(),
-        invoiceDate: selectedDate, // Add the selected date
+        invoiceDate: data.invoiceDate, // Add the selected date
       };
-
-      // Perform the logic to create a new invoice using the invoiceData
-      // You can access selected customer and products using data.customerId and invoiceProducts
-      // Then, navigate to the appropriate page
-      console.log(invoiceData);
-      // navigate("..");
+      await addDoc(collection(db,`users/${user.uid}/invoices`),invoiceData)
+      navigate("..");
     } catch (error) {
       console.log(error);
     } finally {
@@ -127,7 +125,7 @@ const NewInvoice = () => {
     );
   };
   return (
-    <div className="w-full max-w-2xl p-10 text-lg">
+    <div className="w-full max-w-5xl p-10 text-lg">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
           <label htmlFor="customer" className="block text-gray-700">
@@ -157,13 +155,19 @@ const NewInvoice = () => {
           <label htmlFor="invoiceDate" className="block text-gray-700">
             Invoice Date
           </label>
-          <DatePicker
-            id="invoiceDate"
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            className={`border rounded-md px-3 py-2 mt-1 w-full ${
-              errors.invoiceDate ? "border-red-500" : "border-gray-300"
-            }`}
+          <Controller
+            name="invoiceDate"
+            control={control}
+            rules={{required:true}}
+            render={({ field }) => (
+              <DatePicker
+                selected={field.value ||null}
+                onChange={field.onChange}
+                className={`border rounded-md px-3 py-2 mt-1 w-full ${
+                  errors.invoiceDate ? "border-red-500" : "border-gray-300"
+                }`}
+              />
+            )}
           />
           {errors.invoiceDate && (
             <p className="text-red-500 text-xs mt-1">
@@ -212,23 +216,24 @@ const NewInvoice = () => {
             </thead>
             <tbody>
               {invoiceProducts.map((product) => (
-                <tr key={product.id}>
-                  <td className="border px-4 py-2 w-full">
+                <tr key={product.id} className="w-full">
+                  <td className="border  text-center">
                     {product.productName}
                   </td>
-                  <td className="border p-0">
+                  <td className="border">
                     <input
                       type="number"
-                      className="h-full w-full"
+                      className="w-full p-2 outline-none "
                       value={product.price}
                       onChange={(e) => handlePriceEdit(e, product.id)}
                     />
                   </td>
-                  <td className="border px-4 py-2">
+                  <td className="border">
                     <input
                       type="number"
                       value={product.unit}
-                      defaultValue={0}
+                      min={0}
+                      className="w-full p-2 outline-none"
                       onChange={(e) => {
                         const newUnit = parseInt(e.target.value);
                         setInvoiceProducts((prevProducts) =>
@@ -239,16 +244,14 @@ const NewInvoice = () => {
                       }}
                     />
                   </td>
-                  <td className="border px-4 py-2">
-                    {calculateSubtotal(product)
-                      ? calculateSubtotal(product)
-                      : 0}
+                  <td className="border text-right p-2">
+                    {calculateSubtotal(product)||0}
                   </td>
-                  <td className="border px-4 py-2">
+                  <td className=" border text-right">
                     <button
                       type="button"
                       onClick={() => removeProductFromInvoice(product.id)}
-                      className="text-red-600"
+                      className="text-red-600 m-2"
                     >
                       <TrashIcon className="w-5 h-5" />
                     </button>
@@ -257,24 +260,24 @@ const NewInvoice = () => {
               ))}
 
               <tr>
-                <td className="border px-4 py-2 font-bold">Total</td>
-                <td className="border px-4 py-2 font-bold"></td>
-                <td className="border px-4 py-2"></td>
-                <td className="border px-4 py-2 font-bold">
-                  {calculateTotal()?calculateTotal:0}
+                <td className="border p-2 font-bold text-center">Total</td>
+                <td className="border p-2 font-bold"></td>
+                <td className="border p-2"></td>
+                <td className="border p-2 font-bold text-right">
+                  {calculateTotal() || 0}
                 </td>
                 <td className="border px-4 py-2"></td>
               </tr>
             </tbody>
           </table>
         </div>
-
+        {loading?<Loading loadingText={"Creating New Invoice"}/> :
         <button
           type="submit"
           className="bg-blue-500 text-white p-3 rounded-md w-full disabled:opacity-40"
         >
           Create Invoice
-        </button>
+        </button>}
       </form>
     </div>
   );
