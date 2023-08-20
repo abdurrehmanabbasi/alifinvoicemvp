@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import General from './General';
+import Categories from './Categories';
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
 
@@ -47,7 +48,6 @@ const Settings = () => {
         {activeTab === 'general' && (
           <div>
             {/* General settings content */}
-            <h2>General</h2>
             <General />
           </div>
         )}
@@ -55,7 +55,8 @@ const Settings = () => {
         {activeTab === 'categories' && (
           <div>
             {/* Categories content */}
-            <h2>Categories</h2>
+            <h2>Product Categories</h2>
+            <Categories/>
             {/* ... */}
           </div>
         )}
