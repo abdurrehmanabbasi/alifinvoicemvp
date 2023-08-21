@@ -1,8 +1,12 @@
 import { useState } from 'react';
+import useAuth from "../../hooks/useAuth";
 import General from './General';
 import Categories from './Categories';
+
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
+  const { user } = useAuth();
+
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -24,66 +28,25 @@ const Settings = () => {
         >
           Categories
         </button>
-        <button
-          className={activeTab === 'payment' ? 'bg-black rounded-t-md text-white p-3' : ''}
-          onClick={() => handleTabChange('payment')}
-        >
-          Payment
-        </button>
-        <button
-          className={activeTab === 'invoicing' ? 'bg-black rounded-t-md text-white p-3' : ''}
-          onClick={() => handleTabChange('invoicing')}
-        >
-          Invoicing Template
-        </button>
-        <button
-          className={activeTab === 'other' ? 'bg-black rounded-t-md text-white p-3' : ''}
-          onClick={() => handleTabChange('other')}
-        >
-          Other
-        </button>
+
       </div>
     <hr />
       <div className="tab-content">
         {activeTab === 'general' && (
           <div>
             {/* General settings content */}
-            <General />
+            <General user={user}/>
           </div>
         )}
 
         {activeTab === 'categories' && (
           <div>
             {/* Categories content */}
-            <h2>Product Categories</h2>
-            <Categories/>
+            <Categories user={user}/>
             {/* ... */}
           </div>
         )}
 
-        {activeTab === 'payment' && (
-          <div>
-            {/* Payment content */}
-            <h2>Payment</h2>
-            {/* ... */}
-          </div>
-        )}
-
-        {activeTab === 'invoicing' && (
-          <div>
-            {/* Invoicing Template content */}
-            <h2>Invoicing Template</h2>
-            {/* ... */}
-          </div>
-        )}
-
-        {activeTab === 'other' && (
-          <div>
-            {/* Other content */}
-            <h2>Other</h2>
-            {/* ... */}
-          </div>
-        )}
       </div>
     </div>
   );
