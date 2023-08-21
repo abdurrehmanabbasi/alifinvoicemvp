@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from "../../app/firebase";
-import useAuth from "../../hooks/useAuth";
 
-const General = () => {
+const General = ({user}) => {
   const { control, handleSubmit, formState, reset } = useForm();
   const [initialData, setInitialData] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // State to track loading status
-  const { user } = useAuth();
 
   useEffect(() => {
     // Fetch initial data from Firestore based on the UID
