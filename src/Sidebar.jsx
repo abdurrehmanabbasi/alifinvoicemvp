@@ -8,20 +8,27 @@ import {
   Squares2X2Icon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import useAuth from "./hooks/useAuth";
-const Sidebar = ({openMenu,setOpenMenu}) => {
-  const {user}=useAuth()
+import { Bars3Icon, Bars3BottomRightIcon } from "@heroicons/react/24/outline";
+
+// import useAuth from "./hooks/useAuth";
+import { useState } from "react";
+const Sidebar = () => {
+  const [openMenu,setOpenMenu]=useState(true)
+  // const {user}=useAuth()
   return (
-    <aside className={`shadow-lg flex-col ${openMenu?'flex':'hidden'}`}>
-      <div className=" flex flex-col flex-1 p-2 mt-8">
+    <aside className={`shadow-lg flex flex-col `}>
+      <div className=" flex flex-col flex-1 p-2 ">
         <div className="user  w-full">
           <div className="flex flex-col items-center justify-center w-full">
+          <button className={`${openMenu?'self-end':''}`} onClick={()=>setOpenMenu(!openMenu)} >{openMenu?<Bars3BottomRightIcon className="w-6" />:<Bars3Icon className="w-6"/>}</button>
+            
             <img
               src={blankuser}
-              className="w-44 border-2 rounded-full"
+              className={`mt-8 w-44 border-2 rounded-full `}
               alt=""
             />
-            <p>{user.email}</p>
+
+            <p>{openMenu?'AQ khajoor Shop':'AQ'}</p>
           </div>
         </div>
 
@@ -30,44 +37,51 @@ const Sidebar = ({openMenu,setOpenMenu}) => {
             className="flex p-4 gap-x-2 items-center"
             to="/app"
           >
-            <ChartBarIcon className="w-8" /> Dashboard
+            <ChartBarIcon className="w-6" /><p className={`${openMenu?'':'hidden'}`}>Dashboard</p>
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
             to="products"
           >
-            <Squares2X2Icon className="w-8" /> Products
+            <Squares2X2Icon className="w-6" />
+            <p className={`${openMenu?'':'hidden'}`}>Products</p>
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
             to="invoices"
           >
-            <RectangleStackIcon className="w-8" /> Invoices
+            <RectangleStackIcon className="w-6" />
+            <p className={`${openMenu?'':'hidden'}`}>Invoices</p>
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
             to="customers"
           >
-            <UserGroupIcon className="w-8" /> Customers
+            <UserGroupIcon className="w-6" />
+            <p className={`${openMenu?'':'hidden'}`}>Customers</p>
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
-            to="invoices"
+            to="reports"
           >
-            <DocumentChartBarIcon className="w-8" /> Reports
+            <DocumentChartBarIcon className="w-6" />
+            <p className={`${openMenu?'':'hidden'}`}>Reports</p>
           </NavLink>
           <NavLink
             className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
             to="settings"
           >
-            <Cog8ToothIcon className="w-8" /> Settings
+            <Cog8ToothIcon className="w-6" />
+            <p className={`${openMenu?'':'hidden'}`}>Settings</p>
           </NavLink>
         </nav>
       </div>
+      {openMenu?
       <div className="company p-2">
         <p className="">Powered By</p>
         <h2 className="text-orange-600 text-4xl font-bold">Alif Invoice</h2>
       </div>
+      : ""}
     </aside>
   );
 };

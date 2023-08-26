@@ -12,6 +12,7 @@ import Dashboard from "@/pages/Dashboard/index";
 import Products from "@/pages/Products/index";
 import Invoices from "@/pages/Invoices/index";
 import Customers from "@/pages/Customer/index";
+import Reports from "@/pages/Reports/index";
 import Settings from "@/pages/Settings";
 
 import Product from "@/pages/Products/Product";
@@ -51,6 +52,8 @@ function App() {
           <Route path=":id" element={<Invoice />} />
           <Route path="new" element={<NewInvoice />} />
         </Route>
+        <Route path="reports" element={<Reports/>}/>
+
         <Route path="settings" element={<Settings />} />
       </Route>
 
