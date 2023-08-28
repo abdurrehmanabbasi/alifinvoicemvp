@@ -12,7 +12,7 @@ const SigninForm = () => {
   const onSubmit = async (data) => {
     await signInWithEmailAndPassword(auth, data.email, data.password)
       .then(() => {
-        navigate("/app");
+        navigate("/");
       })
       .catch((error) => console.log(error));
   };
