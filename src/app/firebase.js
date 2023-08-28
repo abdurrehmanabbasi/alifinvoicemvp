@@ -7,12 +7,12 @@ import {getFirestore} from "firebase/firestore"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDiizrRhlD12TSfzrWi0YMvWNflYnisBow",
-  authDomain: "alifinvoice-f53f6.firebaseapp.com",
-  projectId: "alifinvoice-f53f6",
-  storageBucket: "alifinvoice-f53f6.appspot.com",
-  messagingSenderId: "984498166410",
-  appId: "1:984498166410:web:52d0bd262f4160b5356b73"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain:import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID
 };
 
 // Initialize Firebase
