@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import Landing from "@/pages/Landing/index";
 
 import Auth from "@/pages/Auth/index";
 import SignupForm from "@/pages/Auth/SignupForm";
@@ -7,11 +6,14 @@ import SigninForm from "@/pages/Auth/SigninForm";
 import ForgotPasswordForm from "@/pages/Auth/ForgotPasswordForm";
 
 import Layout from "@/components/Layout";
+import NotFound from "@/components/NotFound";
+
 
 import Dashboard from "@/pages/Dashboard/index";
 import Products from "@/pages/Products/index";
 import Invoices from "@/pages/Invoices/index";
 import Customers from "@/pages/Customer/index";
+import Reports from "@/pages/Reports/index";
 import Settings from "@/pages/Settings";
 
 import Product from "@/pages/Products/Product";
@@ -31,10 +33,10 @@ import NewInvoice from "@/pages/Invoices/NewInvoice"
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
 
-      <Route path="app" element={<Layout />}>
+      <Route path="/" element={<Layout />}>
         <Route index element={<Dashboard />} />
+        {/* <Route path="dashboard" element={<Dashboard />} /> */}
         <Route path="products" element={<Products />}>
           <Route index element={<ProductsTable />} />
           <Route path=":id" element={<Product />} />
@@ -51,6 +53,8 @@ function App() {
           <Route path=":id" element={<Invoice />} />
           <Route path="new" element={<NewInvoice />} />
         </Route>
+        <Route path="reports" element={<Reports/>}/>
+
         <Route path="settings" element={<Settings />} />
       </Route>
 
@@ -60,6 +64,9 @@ function App() {
         <Route path="signup" element={<SignupForm />} />
         <Route path="forgot-password" element={<ForgotPasswordForm />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
+
     </Routes>
   );
 }

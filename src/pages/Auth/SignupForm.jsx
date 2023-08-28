@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../app/firebase";
-import { collection, doc, setDoc } from "firebase/firestore";
+import {  doc, setDoc } from "firebase/firestore";
 const SignupForm = () => {
   const {
     register,
@@ -16,7 +16,7 @@ const SignupForm = () => {
       .then(async (userCredential) => {
         await setDoc(doc(db,"users",userCredential.user.uid),{businessName:data.businessName})
           .then(() => {
-            navigate("/app");
+            navigate("/");
           })
           .catch((error) => {
             console.log(error);

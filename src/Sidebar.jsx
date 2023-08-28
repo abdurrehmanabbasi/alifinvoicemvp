@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import blankuser from "./assets/blankuser.jpg";
 import {
+  ArrowLeftOnRectangleIcon,
   ChartBarIcon,
   Cog8ToothIcon,
   DocumentChartBarIcon,
@@ -8,66 +9,137 @@ import {
   Squares2X2Icon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import useAuth from "./hooks/useAuth";
-const Sidebar = ({openMenu,setOpenMenu}) => {
-  const {user}=useAuth()
+import { signOut } from "firebase/auth";
+import { auth } from "../src/app/firebase";
+import { Bars3Icon, Bars3BottomRightIcon } from "@heroicons/react/24/outline";
+
+// import useAuth from "./hooks/useAuth";
+import { useState } from "react";
+const Sidebar = () => {
+  const [openMenu, setOpenMenu] = useState(true);
+  // const {user}=useAuth()
   return (
-    <aside className={`shadow-lg flex-col ${openMenu?'flex':'hidden'}`}>
-      <div className=" flex flex-col flex-1 p-2 mt-8">
+    <aside className={`shadow-lg flex flex-col `}>
+      <div className=" flex flex-col flex-1 p-2 ">
         <div className="user  w-full">
           <div className="flex flex-col items-center justify-center w-full">
+            <button
+              className={`${openMenu ? "self-end" : ""}`}
+              onClick={() => setOpenMenu(!openMenu)}
+            >
+              {openMenu ? (
+                <Bars3BottomRightIcon className="w-6" />
+              ) : (
+                <Bars3Icon className="w-6" />
+              )}
+            </button>
+
             <img
               src={blankuser}
-              className="w-44 border-2 rounded-full"
+              className={`mt-8 w-44 border-2 rounded-full `}
               alt=""
             />
-            <p>{user.email}</p>
+
+            {openMenu ? <p>AQ khajoor Shop</p> : <p>AQ </p>}
+            <button
+              onClick={() => {
+                signOut(auth);
+              }}
+            >
+              <ArrowLeftOnRectangleIcon className="w-4 hover:text-red-500" />
+            </button>
           </div>
         </div>
 
         <nav className="flex flex-col text-lg mt-10 ">
           <NavLink
-            className="flex p-4 gap-x-2 items-center"
-            to="/app"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
+            to="/"
           >
-            <ChartBarIcon className="w-8" /> Dashboard
+            <ChartBarIcon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Dashboard
+            </p>
           </NavLink>
           <NavLink
-            className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
             to="products"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
           >
-            <Squares2X2Icon className="w-8" /> Products
+            <Squares2X2Icon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Products
+            </p>
           </NavLink>
           <NavLink
-            className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
             to="invoices"
           >
-            <RectangleStackIcon className="w-8" /> Invoices
+            <RectangleStackIcon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Invoices
+            </p>
           </NavLink>
           <NavLink
-            className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
             to="customers"
           >
-            <UserGroupIcon className="w-8" /> Customers
+            <UserGroupIcon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Customers
+            </p>
           </NavLink>
           <NavLink
-            className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
-            to="invoices"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
+            to="reports"
           >
-            <DocumentChartBarIcon className="w-8" /> Reports
+            <DocumentChartBarIcon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Reports
+            </p>
           </NavLink>
           <NavLink
-            className="flex hover:bg-orange-200 p-4 gap-x-2 items-center"
+            className={({ isActive }) =>
+              isActive
+                ? "bg-orange-500 text-white flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+                : "flex p-4 gap-x-2 items-center hover:bg-orange-200 "
+            }
             to="settings"
           >
-            <Cog8ToothIcon className="w-8" /> Settings
+            <Cog8ToothIcon className="w-6" />
+            <p className={`${openMenu ? "hidden md:block" : " hidden"}`}>
+              Settings
+            </p>
           </NavLink>
         </nav>
       </div>
-      <div className="company p-2">
-        <p className="">Powered By</p>
-        <h2 className="text-orange-600 text-4xl font-bold">Alif Invoice</h2>
-      </div>
+      {openMenu ? (
+        <div className="hidden md:block company p-4">
+          <p className="">Powered By</p>
+          <h2 className="text-orange-600 text-4xl font-bold">Alif Invoice</h2>
+        </div>
+      ) : (
+        ""
+      )}
     </aside>
   );
 };
